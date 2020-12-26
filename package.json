@@ -1,0 +1,27 @@
+{
+  "name": "p2-pw",
+  "version": "1.0.0",
+  "description": "Practica 2 de Projectes Web I",
+  "main": "index.js",
+  "dependencies": {
+    "react-game-engine": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VXGamez/P2-PW.git"
+  },
+  "keywords": [
+    "pw",
+    "p2"
+  ],
+  "author": "Rafael Morera - Victor Xirau - Marti Ejarque",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VXGamez/P2-PW/issues"
+  },
+  "homepage": "https://github.com/VXGamez/P2-PW#readme"
+}
