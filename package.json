@@ -4,6 +4,7 @@
   "description": "Practica 2 de Projectes Web I",
   "main": "src/js/index.js",
   "dependencies": {
+    "react": "^17.0.1",
     "react-game-engine": "^1.0.0"
   },
   "devDependencies": {},
