@@ -2,26 +2,17 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
 
 .App-header {
 
   background-image: url('./assets/bricks.jpg');
   background-size: cover;
   min-height: 100vh;
-
+  
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 0.1fr 1fr 1fr 1fr;
+  grid-template-rows: 10% 25% 25% 40%;
   gap: 0px 0px;
   grid-template-areas:
     "header header header header"
@@ -37,9 +28,6 @@
   width: 150px;
   z-index: 5;
 }
-
-
-
 
 .header { 
   grid-area: header; 
@@ -73,11 +61,11 @@
 }
 .player { 
   grid-area: player; 
-  
   display:flex;
   flex-direction: column;
   align-items: center; 
-  justify-content: center
+  justify-content: center;
+  transform: scaleY(-10%);
 }
 
 .terminal { 
@@ -91,7 +79,6 @@
   margin-right: 5%;
   padding: 10px 0px;
   align-self: center;
-  margin-bottom: 2%;
   border: 1px solid white;
   overflow: scroll;
   overflow-y:scroll;
@@ -105,6 +92,7 @@ h3{
 .control { 
   grid-area: control; 
   opacity: 0.5;
+  
   background-color: white;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -165,28 +153,21 @@ h3{
   
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
 
 .objetos{
   background-image: url('./assets/papeliko.png');
   background-size: cover;
   grid-area: objetos; 
-  height: 147%;
-  transform: translateY(-32%) scaleY(1.05);
+  height: 125%;
+  transform: translateY(-20%);
   display: grid;
-  padding-top: 80px;
+  padding-top: 100px;
   padding-left: 10px;
   padding-right: 10px;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
   gap: 0px 0px;
+  font-style: Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace;
   grid-template-areas:
     "obj1 obj2 obj3"
     "obj4 obj5 obj6"
@@ -195,93 +176,132 @@ h3{
 
 .obj1 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.7fr 1fr;
   grid-template-rows: 1fr;
   gap: 0px 0px;
   grid-template-areas:
     "imgObj1 infoObj1";
   grid-area: obj1;
-  background-color: blue;
+  background-color: #282c3472;
+  border: 5px solid white;
 }
 .imgObj1 { 
   grid-area: imgObj1; 
-  background-color: green;
+ 
 }
 .infoObj1 { 
   grid-area: infoObj1; 
+  color: white;
+  white-space: nowrap;
 }
 .obj2 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.7fr 1fr;
   grid-template-rows: 1fr;
   gap: 0px 0px;
   grid-template-areas:
     "imgObj2 infoObj2";
   grid-area: obj2;
-  background-color: red;
+  background-color: #282c3472;
+  border: 5px solid white;
 }
 .imgObj2 { 
   grid-area: imgObj2; 
-  background-color: green;
+
 }
-.infoObj2 { grid-area: infoObj2; }
+.infoObj2 { 
+  grid-area: infoObj2; 
+  color: white;
+  white-space: nowrap;
+
+}
 .obj3 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.7fr 1fr;
   grid-template-rows: 1fr;
   gap: 0px 0px;
   grid-template-areas:
     "imgObj3 infoObj3";
   grid-area: obj3;
-  background-color: blue;
+  background-color: #282c3472;
+  border: 5px solid white;
 }
 .imgObj3 { 
   grid-area: imgObj3; 
-  background-color: green;
+
 }
-.infoObj3 { grid-area: infoObj3; }
+.infoObj3 { 
+  grid-area: infoObj3;
+  color: white;
+  white-space: nowrap;
+}
 .obj4 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.7fr 1fr;
   grid-template-rows: 1fr;
   gap: 0px 0px;
   grid-template-areas:
     "imgObj4 infoObj4";
   grid-area: obj4;
-  background-color: red;
+  background-color: #282c3472;
+  border: 5px solid white;
 }
 .imgObj4 { 
-  grid-area: imgObj4;
-  background-color: green;
+  grid-area: imgObj4; 
+
 }
-.infoObj4 { grid-area: infoObj4; }
+.infoObj4 { 
+  grid-area: infoObj4;
+  color: white;
+  white-space: nowrap;
+}
 .obj5 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.7fr 1fr;
   grid-template-rows: 1fr;
   gap: 0px 0px;
   grid-template-areas:
     "imgObj5 infoObj5";
   grid-area: obj5;
-  background-color: blue;
+  background-color: #282c3472;
+  border: 5px solid white;
 }
-.imgObj5 { grid-area: imgObj5; }
-.infoObj5 { grid-area: infoObj5; }
+.imgObj5 { 
+  grid-area: imgObj5; 
+
+}
+.infoObj5 { 
+  grid-area: infoObj5; 
+  color: white;
+  white-space: nowrap;
+}
 .obj6 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.7fr 1fr;
   grid-template-rows: 1fr;
   gap: 0px 0px;
   grid-template-areas:
     "imgObj6 infoObj6";
   grid-area: obj6;
-  background-color: red;
+  background-color: #282c3472;
+  border: 5px solid white;
 }
-.imgObj6 { grid-area: imgObj6; }
-.infoObj6 { grid-area: infoObj6; }
+.imgObj6 { 
+  grid-area: imgObj6;
+  
+}
+.infoObj6 { 
+  grid-area: infoObj6;
+  color: white;
+  white-space: nowrap;
+ }
 .explicacion { 
+  width: 100%;
+  height: 100%;
   grid-area: explicacion; 
-  background-color: yellow;
+  
+  background-color: #282c3472;
+  border: 5px solid white;
 }
 
 
