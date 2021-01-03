@@ -1,7 +1,7 @@
 //import logo from './logo.svg';
 import { logo, up, left, down, right,vidaLogo } from './assets';
 import { avatars } from './assets/avatars';
-import ProgressBar from 'react-bootstrap/ProgressBar';
+import Button from 'react-bootstrap/Button'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -47,7 +47,8 @@ function makeRequest (method, url) {
 
 
 function nuevaPartida(){
-  var nom = prompt('Introduce el nombre de tu jugador:', '');
+  if(constantes.PLAYER_INFO.player_token === "" && constantes.PLAYER_INFO.player_token === "" ){
+    var nom = prompt('Introduce el nombre de tu jugador:', '');
   if(nom!=null){
     makeRequest('GET', 'http://battlearena.danielamo.info/api/spawn/'+constantes.TOKEN+'/'+nom)
     .then(function (datums) {
@@ -60,25 +61,33 @@ function nuevaPartida(){
         makeRequest('GET', 'http://battlearena.danielamo.info/api/player/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token)
         .then(function (datums) {
           var obj = JSON.parse(datums);
-          var playerName = document.getElementById("nombrePlayer");
-          playerName.innerText = obj.name;
-
+          var newInfo = document.createElement("div");
+          newInfo.id = 'informasion';
+          newInfo.style.backgroundColor = 'rgba(255, 255, 255, 0.365)';
+          var name = document.createElement("h2");
+          name.id = 'nombrePlayer';
+          name.innerText = obj.name;
+          newInfo.appendChild(name);
+          console.log('1');
           var imagen = document.createElement("img");
           imagen.src = avatars[obj.image-1];
           imagen.className = 'characterImage';
           imagen.alt = 'characterImage';
           imagen.style.height='300px';
-          document.getElementById("infomasion").appendChild(imagen);
-          
+          console.log('1.2');
+          newInfo.appendChild(imagen);
+          console.log('2');
           var node = document.createElement("div");
           node.className = 'life';
           node.id = 'life';
-
+          console.log('3');
           node.innerHTML =  `<div className="corasong"> <img src='/static/media/corazon.d3bf3074.svg' alt='vida' height='30px'/>  </div> <div class="progress"><div role="progressbar" class="progress-bar bg-danger progress-bar-animated progress-bar-striped" aria-valuenow="`+(obj.vitalpoints*2)+`" aria-valuemin="0" aria-valuemax="100" style="width: `+(obj.vitalpoints*2)+`%;"></div></div>`;
-
-          document.getElementById("infomasion").appendChild(node);
-          
+          console.log('4');
+          newInfo.appendChild(node);
+          console.log('5');
           console.log(obj);
+          document.getElementById("player").appendChild(newInfo);
+
         })
         .catch(function (err) {
             console.log('Augh, there was an error!', err.statusText);
@@ -89,6 +98,10 @@ function nuevaPartida(){
         console.log('Augh, there was an error!', err.statusText);
     });
   }
+  }else{
+    console.log('Ya has hecho spawn de un jugador!');
+  }
+  
 }
 
 function eliminarJugador(){
@@ -97,10 +110,18 @@ function eliminarJugador(){
   }else{
     makeRequest('GET', 'http://battlearena.danielamo.info/api/remove/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token+'/'+constantes.PLAYER_INFO.security_code)
     .then(function (datums) {
+
+      document.querySelector('#player').innerHTML= '';
+    
+      
+      constantes.PLAYER_INFO.player_token = "";
+      constantes.PLAYER_INFO.security_code = "";
+
+
       console.log('Jugador Eliminado');
     })
     .catch(function (err) {
-        console.error('Augh, there was an error!', err.statusText);
+        console.log('Augh, there was an error!', err.statusText);
     });
   }
  
@@ -150,14 +171,23 @@ document.onkeydown = function(e) {
   }
 };
 
+
 function App() {
   return (
     <div className="App">
       <header className="App-header">
         <div className="header">
-          <img src={logo} className="logo" alt='logo' height='50px'/>
-          <button onClick={nuevaPartida}>SPAWN</button>
-          <button onClick={eliminarJugador}>REMOVE</button>
+          
+
+          <img src={logo} className="logo" alt='logo' height='70px'/>
+          <div className="siteTitle">
+            <h4>Pràctica 2</h4>
+            <h6>Marti Ejarque · Rafael Morera · Victor Xirau</h6>
+          </div>
+          <Button variant="outline-danger" onClick={eliminarJugador}>REMOVE</Button>{' '}
+          <Button variant="outline-success" onClick={nuevaPartida}>SPAWN</Button>{' '}
+         
+
         </div>
         <div className="mapa">
           <div className="miniMapa">
@@ -167,14 +197,7 @@ function App() {
         </div>
         
         
-        <div className="player">
-          <div id="infomasion" style={{backgroundColor: 'rgba(255, 255, 255, 0.365)'}}>
-            <h2 id='nombrePlayer'>PLAYER NAME</h2>
-            <div id="corasong"></div>
-          <div>              
-              
-          </div>
-          </div>
+        <div className="player" id="player">
          
         </div>
 
@@ -189,13 +212,13 @@ function App() {
             <img src={up} style={{margin:'auto',width:'100px',display:'block'}}/> 
           </div>
           <div className="down"> 
-          <img src={down} style={{margin:'auto',width:'100px',display:'block'}}/> 
+            <img src={down} style={{margin:'auto',width:'100px',display:'block'}}/> 
           </div>
           <div className="left"> 
             <img src={left} style={{margin:'auto',width:'100px',display:'block'}}/> 
           </div>
           <div className="right"> 
-          <img src={right} style={{margin:'auto',width:'100px',display:'block'}}/> 
+            <img src={right} style={{margin:'auto',width:'100px',display:'block'}}/> 
           </div>
         </div>
         <div className="bruju"></div>
