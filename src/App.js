@@ -1,5 +1,5 @@
 //import logo from './logo.svg';
-import { logo, up, left, down, right,vidaLogo, espadas, escudo, marco, maderita, noObj, nord, sud, este, oeste, bruju } from './assets';
+import { logo, up, left, down, right, espadas, escudo, marco, noObj, nord, sud, este, oeste, bruju, papeliko } from './assets';
 import { avatars } from './assets/avatars';
 import { corrupcion, hachasDestino, garras, kunai, lanza, muerte, sangre } from './assets/audio';
 import Button from 'react-bootstrap/Button'
@@ -13,17 +13,29 @@ const constantes = {
   TOKEN: "b89f96d2",
   PLAYER_INFO: 
   {
+    x: "",
+    y: "",
     player_token : "",
-    security_code: ""
-  }
+    security_code: "",
+    direction: ""
+  },
+  ObjectCooldown: 0
 }
 
+//var estoyVivo = 0;
 
+window.onload = function() {
+  var imagen = document.getElementById("imagenFondo");
+  var loDemas = document.getElementById("header");
+  imagen.style.height = loDemas.style.height;
+};
 
-function makeRequest (method, url) {
+window.scrollTo(0, 0);
+
+function makeRequest (method, url, obj) {
   return new Promise(function (resolve, reject) {
     var xhr = new XMLHttpRequest();
-    xhr.open(method, url);
+    xhr.open(method, url, true);
     xhr.onload = function () {
       if (this.status >= 200 && this.status < 300) {
         resolve(xhr.response);
@@ -40,7 +52,22 @@ function makeRequest (method, url) {
         statusText: xhr.statusText
       });
     };
-    xhr.send();
+    if(method==='POST'){
+      
+      xhr.setRequestHeader('Content-type', 'application/json');
+
+      var form = new FormData();
+      form.append('name', obj.name);
+      form.append('image', obj.image);
+      form.append('attack', obj.attack);
+      form.append('defense', obj.defense);
+
+      console.log('FORM CREAT: ' + JSON.stringify(form));
+      
+      xhr.send(form);
+    }else{
+      xhr.send();
+    }
   });
 }
 
@@ -48,95 +75,149 @@ function makeRequest (method, url) {
 
 
 function nuevaPartida(){
+
+
   if(constantes.PLAYER_INFO.player_token === "" && constantes.PLAYER_INFO.security_code === "" ){
     var nom = prompt('Introduce el nombre de tu jugador:', '');
-  if(nom!=null){
-    makeRequest('GET', 'http://battlearena.danielamo.info/api/spawn/'+constantes.TOKEN+'/'+nom)
-    .then(function (datums) {
-        var obj = JSON.parse(datums);
-        constantes.PLAYER_INFO.player_token = obj.token;
-        constantes.PLAYER_INFO.security_code = obj.code;
-        console.log('Jugador Creado!\nToken: ' + constantes.PLAYER_INFO.player_token + '\nCodigo de Seguridadad: ' + constantes.PLAYER_INFO.security_code);
+    if(nom!=null){
 
-        makeRequest('GET', 'http://battlearena.danielamo.info/api/player/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token)
-        .then(function (datums) {
+      
+      makeRequest('GET', 'http://battlearena.danielamo.info/api/spawn/'+constantes.TOKEN+'/'+nom, null)
+      .then(function (datums) {
           var obj = JSON.parse(datums);
-          var newInfo = document.createElement("div");
-          newInfo.id = 'informasion';
-          newInfo.style.backgroundColor = 'rgba(0, 0, 0, 0.365)';
-          newInfo.style.width = '90%';
-          newInfo.style.height = '90%';
-          newInfo.style.color = 'white';
-          var name = document.createElement("h2");
-          name.id = 'nombrePlayer';
-          name.innerText = obj.name;
-          newInfo.appendChild(name);
-          var imagen = document.createElement("img");
-          imagen.src = avatars[obj.image-1];
-          imagen.className = 'characterImage';
-          imagen.alt = 'characterImage';
-          imagen.style.height='300px';
-          newInfo.appendChild(imagen);
-          var node = document.createElement("div");
-          node.className = 'life';
-          node.id = 'life';
-          node.innerHTML =  `<div className="corasong"> <img src='/static/media/corazon.d3bf3074.svg' alt='vida' height='30px'/>  </div> <div class="progress"><div role="progressbar" class="progress-bar bg-danger progress-bar-animated progress-bar-striped" aria-valuenow="`+(obj.vitalpoints*2)+`" aria-valuemin="0" aria-valuemax="100" style="width: `+(obj.vitalpoints*2)+`%;">`+(obj.vitalpoints)+`vp</div></div>`;
-          newInfo.appendChild(node);
-          console.log(obj);
-          var selectedObject = document.createElement("img");
-          selectedObject.id = "selectedObject";
-          selectedObject.src = noObj;
-          selectedObject.alt = 'selectedObject';
-          selectedObject.style.height='50px';
-          selectedObject.style.marginTop='30px';
-          newInfo.appendChild(selectedObject);
-          var objectInfo = document.createElement("p");
-          objectInfo.id = 'objectName';
-          objectInfo.textContent = 'Ningun objeto seleccionado';
-          objectInfo.style.fontSize = '16px';
-          objectInfo.style.marginTop='10px';
-          objectInfo.style.fontWeight='bold';
-          objectInfo.style.fontFamily = 'Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace';
-          newInfo.appendChild(objectInfo);
-          var objectAttack = document.createElement("p");
-          objectAttack.id = 'objectAttack';
-          objectAttack.textContent = 'Ataque: -';
-          objectAttack.style.fontSize = '14px';
-          objectAttack.style.fontWeight='bold';
-          objectAttack.style.fontFamily = 'Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace';
-          newInfo.appendChild(objectAttack);
-          var objectDefense = document.createElement("p");
-          objectDefense.id = 'objectDefense';
-          objectDefense.textContent = 'Defensa: -';
-          objectDefense.style.fontSize = '14px';
-          objectDefense.style.fontWeight='bold';
-          objectDefense.style.fontFamily = 'Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace';
-          newInfo.appendChild(objectDefense);
-          document.getElementById("player").appendChild(newInfo);
+          constantes.PLAYER_INFO.player_token = obj.token;
+          constantes.PLAYER_INFO.security_code = obj.code;
           
-          
-          var atk = document.createElement("p");
-          atk.innerText('obj.attack');
-          document.getElementById("ataque").appendChild(atk);
+          console.log('Jugador Creado!\nToken: ' + constantes.PLAYER_INFO.player_token + '\nCodigo de Seguridadad: ' + constantes.PLAYER_INFO.security_code);
 
-          var df = document.createElement("p");
-          df.innerText('obj.defense');
-          document.getElementById("defensa").appendChild(df);
-          
-          
+          makeRequest('GET', 'http://battlearena.danielamo.info/api/player/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token, null)
+          .then(function (datums) {
+            var obj = JSON.parse(datums);
+            //estoyVivo = 1;
+            constantes.PLAYER_INFO.x = obj.x;
+            constantes.PLAYER_INFO.y = obj.y;
+            constantes.PLAYER_INFO.direction = obj.direction;
+            var newInfo = document.createElement("div");
+            newInfo.id = 'informasion';
+            newInfo.style.backgroundColor = 'rgba(0, 0, 0, 0.365)';
+            newInfo.style.width = '90%';
+            newInfo.style.height = '90%';
+            newInfo.style.color = 'white';
+            var name = document.createElement("h2");
+            name.id = 'nombrePlayer';
+            name.innerText = obj.name;
+            newInfo.appendChild(name);
+            var imagen = document.createElement("img");
+            imagen.src = avatars[obj.image-1];
+            imagen.className = 'characterImage';
+            imagen.alt = 'characterImage';
+            imagen.style.height='35%';
+            imagen.style.width='35%';
+            newInfo.appendChild(imagen);
+            var node = document.createElement("div");
+            node.className = 'life';
+            node.id = 'life';
+            node.innerHTML =  `<div className="corasong"> <img src='/static/media/corazon.d3bf3074.svg' alt='vida' height='30px'/>  </div> <div class="progress"><div role="progressbar" class="progress-bar bg-danger progress-bar-animated progress-bar-striped" aria-valuenow="`+(obj.vitalpoints*2)+`" aria-valuemin="0" aria-valuemax="100" style="width: `+(obj.vitalpoints*2)+`%;">`+(obj.vitalpoints)+`vp</div></div>`;
+            newInfo.appendChild(node);
+            console.log(obj);
+            var selectedObject = document.createElement("img");
+            selectedObject.id = "selectedObject";
+            selectedObject.src = noObj;
+            selectedObject.alt = 'selectedObject';
+            selectedObject.style.height='10%';
+            selectedObject.style.width='10%';
+            selectedObject.style.marginTop='15px';
+            newInfo.appendChild(selectedObject);
+            var objectInfo = document.createElement("p");
+            objectInfo.id = 'objectName';
+            objectInfo.textContent = 'Ningun objeto seleccionado';
+            objectInfo.style.fontSize = '16px';
+            objectInfo.style.marginTop='10px';
+            objectInfo.style.fontWeight='bold';
+            objectInfo.style.fontFamily = 'Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace';
+            newInfo.appendChild(objectInfo);
+            var objectAttack = document.createElement("p");
+            objectAttack.id = 'objectAttack';
+            objectAttack.textContent = 'Ataque: -';
+            objectAttack.style.fontSize = '14px';
+            objectAttack.style.fontWeight='bold';
+            objectAttack.style.fontFamily = 'Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace';
+            newInfo.appendChild(objectAttack);
+            var objectDefense = document.createElement("p");
+            objectDefense.id = 'objectDefense';
+            objectDefense.textContent = 'Defensa: -';
+            objectDefense.style.fontSize = '14px';
+            objectDefense.style.fontWeight='bold';
+            objectDefense.style.fontFamily = 'Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace';
+            newInfo.appendChild(objectDefense);
+            document.getElementById("player").appendChild(newInfo);
+            
+            
+            var atk = document.getElementById("atk");
+            atk.textContent = obj.attack;
+
+            var df = document.getElementById("df")
+            df.textContent = obj.defense;
+            
+
+            console.log("Width?");
+            var w = document.getElementById("myCanvas").clientWidth;
+            console.log(w);
+            console.log("Height?");
+            var h = document.getElementById("myCanvas").clientHeight;
+            console.log(h);
+            var c = document.getElementById("myCanvas");
+            c.width  = c.offsetWidth;
+            c.height = c.offsetHeight;
+            var ctx = c.getContext("2d");
+            ctx.fillStyle = "#000000"; 
+
+            //ctx.fillRect(40, 0, w/40 - 2 , h/40 - 2);
 
           
-          
-        })
-        .catch(function (err) {
-            console.log('Augh, there was an error!', err.statusText);
-        });
 
-    })
-    .catch(function (err) {
-        console.log('Augh, there was an error!', err.statusText);
-    });
-  }
+
+
+          
+            
+            
+            makeRequest('GET', 'http://battlearena.danielamo.info/api/map/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token, null)
+            .then(function (datums) {
+              
+              var obj = JSON.parse(datums);
+              var total = obj.enemies.length;
+              let j = 0, i=0;
+              
+              //ctx.clearRect(0, 0, c.width, c.height);
+              var w = document.getElementById("myCanvas").clientWidth;
+              var h = document.getElementById("myCanvas").clientHeight;
+              var c = document.getElementById("myCanvas");
+              var ctx = c.getContext("2d");
+              ctx.fillStyle = "#FF0000"; 
+              for(j = 0; j < total; j++) {
+                ctx.fillRect((w/40)*obj.enemies[j].x, h-((h/40)*obj.enemies[j].y), w/40 - 2 , h/40 - 2);
+              }
+              ctx.fillStyle = "#000000"; 
+              ctx.fillRect((w/40)*constantes.PLAYER_INFO.x, h-((h/40)*constantes.PLAYER_INFO.y), w/40 - 2 , h/40 - 2);
+
+            
+              
+          })
+            .catch(function (err) {
+              console.log('Augh, there was an error!', err.statusText);
+            });
+            
+          
+          })
+          .catch(function (err) {
+              console.log('Augh, there was an error!', err.statusText);
+          });
+
+      })
+      .catch(function (err) {
+          console.log('Augh, there was an error!', err.statusText);
+      });
+    }
   }else{
     console.log('Ya has hecho spawn de un jugador!');
   }
@@ -147,7 +228,7 @@ function eliminarJugador(){
   if(constantes.PLAYER_INFO.player_token === "" || constantes.PLAYER_INFO.security_code === "" ){
     console.log('Crea un jugador primero!');
   }else{
-    makeRequest('GET', 'http://battlearena.danielamo.info/api/remove/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token+'/'+constantes.PLAYER_INFO.security_code)
+    makeRequest('GET', 'http://battlearena.danielamo.info/api/remove/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token+'/'+constantes.PLAYER_INFO.security_code, null)
     .then(function (datums) {
 
       document.querySelector('#player').innerHTML= '';
@@ -155,6 +236,12 @@ function eliminarJugador(){
       
       constantes.PLAYER_INFO.player_token = "";
       constantes.PLAYER_INFO.security_code = "";
+
+      var atk = document.getElementById("atk");
+      atk.textContent = '--';
+
+      var df = document.getElementById("df")
+      df.textContent = '--';
 
 
       console.log('Jugador Eliminado');
@@ -192,130 +279,367 @@ window.console = {
   }
 }
 
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
 
-document.onkeydown = function(e) {
+  
+
+
+document.onkeydown = function(e){
   switch (e.keyCode) {
+    case 37:
+        console.log("El personaje se mueve a la izquierda");
+        document.getElementById("left").style.transform = "scale(0.8)";
+        e.preventDefault();
+        break;
+    case 38:
+        console.log("El personaje se mueve hacia delante");
+        document.getElementById("up").style.transform = "scale(0.8)";
+        e.preventDefault();
+        break;
+    case 39:
+        console.log("El personaje se mueve a la derecha");
+        document.getElementById("right").style.transform = "scale(0.8)";
+        e.preventDefault();
+        break;
+    case 40:
+        console.log("El personaje se mueve hacia atras");
+        document.getElementById("down").style.transform = "scale(0.8)";
+        e.preventDefault();
+        break;
+    default:
+      break;
+  }
+}
+
+
+
+document.onkeyup = function(e) {
+  var newObj;
+  var created = 0;
+  var audio;
+  var direction;
+  if(constantes.PLAYER_INFO.player_token === "" || constantes.PLAYER_INFO.security_code === "" ){
+    if(e.keyCode!==37 &&e.keyCode!==38&&e.keyCode!==39&&e.keyCode!==40 ){
+      console.log('Crea un jugador primero!');
+    }
+  }else{
+    created=1;
+  }
+    switch (e.keyCode) {
+      case 32:
+        if(created===1){
+          console.log('Estas atacando en la dirección ' + constantes.PLAYER_INFO.direction);
+          makeRequest('GET', 'http://battlearena.danielamo.info/api/attack/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token + '/' + constantes.PLAYER_INFO.direction, null)
+          .then(function (datums) {
+              var obj = JSON.parse(datums);
+              console.log('ES BIEN:' + JSON.stringify(obj));
+          })
+          .catch(function (err){
+            console.log('ES MAL:' + JSON.stringify(err));
+          });
+
+        }
+        break;
       case 37:
-          console.log("El personaje se mueve a la izquierda");
-          document.getElementsByClassName("left").style.transform = "scale(0.5)";
-          break;
+        constantes.PLAYER_INFO.direction = 'O';
+        created=3;
+        direction = 'O';
+        sleep(100).then(() => {
+          document.getElementById("left").style.transform = "scale(1)";
+        });      
+        break;
       case 38:
-          console.log("El personaje se mueve hacia delante");
-          break;
+        constantes.PLAYER_INFO.direction = 'N';
+        created=3;
+        direction = 'N';
+        sleep(100).then(() => {
+          document.getElementById("up").style.transform = "scale(1)";
+        });  
+        break;
       case 39:
-          console.log("El personaje se mueve hacia la derecha");
-          break;
+        constantes.PLAYER_INFO.direction = 'E';
+        created=3;
+        direction = 'E';
+        sleep(100).then(() => {
+          document.getElementById("right").style.transform = "scale(1)";
+        }); 
+        break;
       case 40:
-          console.log("El personaje se mueve hacia atras");
-          break;
+        constantes.PLAYER_INFO.direction = 'S';
+        created=3;
+        direction = 'S';
+        sleep(100).then(() => {
+          document.getElementById("down").style.transform = "scale(1)";
+        }); 
+        break;
       case 81:
-          var audio = new Audio(hachasDestino);
-          audio.play();
-          var newObj = 
-          {
-            name: 'Hachas del Destino',
-            image: document.getElementById("imgObj1").src,
-            attack: '9',
-            defense: '-1'
+          if(created===1 && constantes.ObjectCooldown===0){
+            document.getElementById("obj1").style.transform = "scale(0.9)";
+            audio = new Audio(hachasDestino);
+            audio.play();
+            newObj = 
+            {
+              name: 'Hachas del Destino',
+              image: document.getElementById("imgObj1").src,
+              attack: '9',
+              defense: '-1'
+            };
+            created = 2;
+            console.log("Hachas del destino forjadas!");
+            console.log("La muerte es como el viento... siempre a mi lado...");
+            sleep(1000).then(() => {
+              document.getElementById("obj1").style.transform = "scale(1)";
+            });  
+          }else if(constantes.ObjectCooldown===1){
+            console.log('Espera para poder volver a crear un objeto!');
           }
-          console.log("Hachas del destino forjadas!");
-          console.log("La muerte es como el viento... siempre a mi lado...");
           break;
       case 87:
-          var audio = new Audio(kunai);
-          audio.play();
-          var newObj = 
-          {
-            name: 'Kunai Represor',
-            image: document.getElementById("imgObj2").src,
-            attack: '7',
-            defense: '4'
+          if(created===1 && constantes.ObjectCooldown===0){
+            document.getElementById("obj2").style.transform = "scale(0.9)";
+            audio = new Audio(kunai);
+            audio.play();
+            newObj = 
+            {
+              name: 'Kunai Represor',
+              image: document.getElementById("imgObj2").src,
+              attack: '7',
+              defense: '4'
+            };
+            created = 2;
+            console.log("Kunai represor ");
+            console.log("Nunca se tienen demasiados kunai...");
+            sleep(1000).then(() => {
+              document.getElementById("obj2").style.transform = "scale(1)";
+            });  
+          }else if(constantes.ObjectCooldown===1){
+            console.log('Espera para poder volver a crear un objeto!');
           }
-          console.log("Kunai represor ");
-          console.log("Nunca se tienen demasiados kunai...");
           break;
       case 69:
-          var audio = new Audio(lanza);
-          audio.play();
-          var newObj = 
-          {
-            name: 'Lanza Letal',
-            image: document.getElementById("imgObj3").src,
-            attack: '10',
-            defense: '0'
+          if(created===1 && constantes.ObjectCooldown===0){
+            document.getElementById("obj3").style.transform = "scale(0.9)";
+            audio = new Audio(lanza);
+            audio.play();
+            newObj = {
+              name: 'Lanza Letal',
+              image: document.getElementById("imgObj3").src,
+              attack: '10',
+              defense: '0'
+            };
+            created = 2;
+            console.log("Lanza letal forjada!");
+            console.log("Huye! Y la lanza encontrará tu espalda...");
+            sleep(1000).then(() => {
+              document.getElementById("obj3").style.transform = "scale(1)";
+            });  
+          }else if(constantes.ObjectCooldown===1){
+            console.log('Espera para poder volver a crear un objeto!');
           }
-          console.log("Lanza letal forjada!");
-          console.log("Huye! Y la lanza encontrará tu espalda...");
           break;
       case 82:
-          var audio = new Audio(garras);
-          audio.play();
-          var newObj = 
-          {
-            name: 'Garras del inmortal',
-            image: document.getElementById("imgObj4").src,
-            attack: '16',
-            defense: '-4'
+          if(created===1 && constantes.ObjectCooldown===0){
+            document.getElementById("obj4").style.transform = "scale(0.9)";
+            audio = new Audio(garras);
+            audio.play();
+            newObj = {
+              name: 'Garras del inmortal',
+              image: document.getElementById("imgObj4").src,
+              attack: '16',
+              defense: '-4'
+            };
+            created = 2;
+            console.log("Garras del inmortal forjadas!");
+            console.log("Hmmm.... Siente el poder de la naturaleza");
+            sleep(1000).then(() => {
+              document.getElementById("obj4").style.transform = "scale(1)";
+            });  
+          }else if(constantes.ObjectCooldown===1){
+            console.log('Espera para poder volver a crear un objeto!');
           }
-          console.log("Garras del inmortal forjadas!");
-          console.log("Hmmm.... Siente el poder de la naturaleza");
           break;
       case 84:
-          var audio = new Audio(sangre);
-          audio.play();
-          var newObj = 
-          {
-            name: 'Poción de sangre',
-            image: document.getElementById("imgObj5").src,
-            attack: '8',
-            defense: '0'
+          if(created===1 && constantes.ObjectCooldown===0){
+            document.getElementById("obj5").style.transform = "scale(0.9)";
+            audio = new Audio(sangre);
+            audio.play();
+            newObj = 
+            {
+              name: 'Poción de sangre',
+              image: document.getElementById("imgObj5").src,
+              attack: '8',
+              defense: '0'
+            }
+            created = 2;
+            console.log("Poción de sangre creada!");
+            console.log("Rojos se tornarán los rios");
+            sleep(1000).then(() => {
+              document.getElementById("obj5").style.transform = "scale(1)";
+            });  
+          }else if(constantes.ObjectCooldown===1){
+            console.log('Espera para poder volver a crear un objeto!');
           }
-          console.log("Poción de sangre creada!");
-          console.log("Rojos se tornarán los rios");
           break;
       case 89:
-          
-          var audio = new Audio(corrupcion);
-          audio.play();
-          var newObj = 
-          {
-            name: 'Poción de corrupción',
-            image: document.getElementById("imgObj6").src,
-            attack: '0',
-            defense: '8'
+          if(created===1 && constantes.ObjectCooldown===0){
+            document.getElementById("obj6").style.transform = "scale(0.9)";
+            audio = new Audio(corrupcion);
+            audio.play();
+            newObj = 
+            {
+              name: 'Poción de Rabia',
+              image: document.getElementById("imgObj6").src,
+              attack: '0',
+              defense: '8'
+            }
+            created = 2;
+            console.log("Poción de Rabia creada!");
+            console.log("Esto puede doler...");
+            sleep(1000).then(() => {
+              document.getElementById("obj6").style.transform = "scale(1)";
+            });  
+          }else if(constantes.ObjectCooldown===1){
+            console.log('Espera para poder volver a crear un objeto!');
           }
-          console.log("Poción de corrupción creada!");
-          console.log("Esto puede doler...");
           break;
       case 187:
-          
-          var audio = new Audio(muerte);
-          audio.play();
-          var newObj = 
-          {
-            name: 'Poción de corrupción',
-            image: document.getElementById("imgObj6").src,
-            attack: '0',
-            defense: '8'
+          if(created===1 && constantes.ObjectCooldown===0){
+            audio = new Audio(muerte);
+            audio.play();
+            newObj = 
+            {
+              name: 'Masacre a Porrazos',
+              image: 'https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/machuahuitl.svg?token=ALPT6YEGJSUHD2OT7SKUZLC77QYDC',
+              attack: '60',
+              defense: '60'
+            }
+            created = 2;
+            console.log("Masacre a Porrazos");
+            console.log("Vivo para dar muerte");
+          }else if(constantes.ObjectCooldown===1){
+            console.log('Espera para poder volver a crear un objeto!');
           }
-          console.log("Poción de corrupción creada!");
-          console.log("Esto puede doler...");
           break;
+      default:
+        break;
   }
-  console.log(e.keyCode);
-  //Q = 81
-  //W = 87
-  //E = 69
-  //R = 82
-  //T = 84
-  //Y = 89
-};
+
+  if(created===2){
+      disableKeypresses();
+      console.log(newObj);
+      makeRequest('POST', 'http://battlearena.danielamo.info/api/craft/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token, newObj)
+          .then(function (datums) {
+            var obj = JSON.parse(datums);
+            console.log(JSON.stringify(obj));
+          })
+          .catch(function (err){
+            console.log('Error: ' + JSON.stringify(err));
+          });
+
+      /*makeRequest('GET', 'http://battlearena.danielamo.info/api/player/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token, null)
+          .then(function (datums) {
+            var obj = JSON.parse(datums);
+            console.log(obj);
+          });*/
+      console.log('objeto creado');
+      created=0;
+  }else if(created===3){
+    console.log('DIRECTION: ' + direction);
+    makeRequest('GET', 'http://battlearena.danielamo.info/api/move/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token + '/' +direction, null)
+    .then(function (datums) {
+        var obj = JSON.parse(datums);
+        console.log('ES BIEN:' + JSON.stringify(obj));
+    })
+    .catch(function (err){
+      console.log('ES MAL:' + JSON.stringify(err));
+    });
+    created=0;
+  }
+
+}
+
+
+
+function disableKeypresses(){
+  constantes.ObjectCooldown = 1;
+  
+  var obj1 = document.getElementById("obj1");
+  var objAnterior1 = obj1.innerHTML;
+  var estilAnterior1 = obj1.style;
+  obj1.opacity = '1';
+  obj1.style.background = 'black';
+  obj1.style.animation = 'cooldown 10s ease';
+
+  var obj2 = document.getElementById("obj2");
+  var objAnterior2 = obj2.innerHTML;
+  var estilAnterior2 = obj2.style;
+  obj2.opacity = '1';
+  obj2.style.background = 'black';
+  obj2.style.animation = 'cooldown 10s ease';
+
+  var obj3 = document.getElementById("obj3");
+  var objAnterior3 = obj3.innerHTML;
+  var estilAnterior3 = obj3.style;
+  obj3.opacity = '1';
+  obj3.style.background = 'black';
+  obj3.style.animation = 'cooldown 10s ease';
+  
+  var obj4 = document.getElementById("obj4");
+  var objAnterior4 = obj4.innerHTML;
+  var estilAnterior4 = obj4.style;
+  obj4.opacity = '1';
+  obj4.style.background = 'black';
+  obj4.style.animation = 'cooldown 10s ease';
+  
+  var obj5 = document.getElementById("obj5");
+  var objAnterior5 = obj5.innerHTML;
+  var estilAnterior5 = obj5.style;
+  obj5.opacity = '1';
+  obj5.style.background = 'black';
+  obj5.style.animation = 'cooldown 10s ease';
+
+  var obj6 = document.getElementById("obj6");
+  var objAnterior6 = obj6.innerHTML;
+  var estilAnterior6 = obj6.style;
+  obj6.opacity = '1';
+  obj6.style.background = 'black';
+  obj6.style.animation = 'cooldown 10s ease';
+
+  setTimeout(function(){
+    obj1.innerHTML = objAnterior1;
+    obj1.style = estilAnterior1;
+
+    obj2.innerHTML = objAnterior2;
+    obj2.style = estilAnterior2;
+
+    obj3.innerHTML = objAnterior3;
+    obj3.style = estilAnterior3;
+
+    obj4.innerHTML = objAnterior4;
+    obj4.style = estilAnterior4;
+
+    obj5.innerHTML = objAnterior5;
+    obj5.style = estilAnterior5;
+
+    obj6.innerHTML = objAnterior6;
+    obj6.style = estilAnterior6;
+
+
+    constantes.ObjectCooldown = 0;
+  },10000);
+  
+}
 
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
+
+      <img id="imagenFondo" src={papeliko} className="imagenFondo" alt="imagen de fondo" />
+      
+      <header id="header" className="App-header">
         <div className="header">
           
 
@@ -330,9 +654,10 @@ function App() {
 
         </div>
         <div className="mapa">
-          <img src={marco} style={{width:'101.5%',height:'105.5%', transform: 'translateY(-5%)'}}/>
-          <div className="miniMapa">
-
+          <img className="marquito" src={marco} alt="marquito"/>
+          <div className="escena" id="escena"></div>
+          //<div className="mm" id="miniMapa">
+          <canvas className="miniMapa" id="myCanvas" width="100%" height="100%"></canvas>
           </div>
 
         </div>
@@ -348,124 +673,97 @@ function App() {
           </div>
         </div>
         <div className="control">
-          <div className="up"> 
-            <img src={up} style={{marginTop:"100%",width:'100px',display:'block'}}/> 
+          <div className="up" id="up"> 
+            <img src={up} alt='up' style={{height: "100%",width: "100%", display:'block'}}/> 
           </div>
-          <div className="down"> 
-            <img src={down} style={{marginBottom:"100%",width:'100px',display:'block'}}/> 
+          <div className="down" id="down"> 
+            <img src={down} alt='down' style={{height: "100%",width: "100%", display:'block'}}/> 
           </div>
-          <div className="left"> 
-            <img src={left} style={{margin:'auto',width:'100px',display:'block'}}/> 
+          <div className="left" id="left"> 
+            <img src={left} alt="left" style={{height: "100%",width: "100%", display:'block'}}/> 
           </div>
-          <div className="right"> 
-            <img src={right} style={{margin:'auto',width:'100px',display:'block'}}/> 
+          <div className="right" id="right"> 
+            <img src={right} alt="right" style={{height: "100%", width: "100%",display:'block'}}/> 
           </div>
         </div>
+       
+
         <div className="bruju">
           
           <div className="nord">
-            <img src={nord} style={{width:'55%', height:'55%'}}/>
+            <img src={nord} alt="nord" style={{width:'55%', height:'55%'}}/>
           </div>
 
           <div className="sud">
-            <img src={sud} style={{width:'55%', height:'55%'}}/>
+            <img src={sud} alt="sud" style={{width:'55%', height:'55%'}}/>
           </div>
 
           <div className="oest">
-            <img src={oeste} style={{width:'55%', height:'55%'}}/>
+            <img src={oeste} alt="oeste" style={{width:'55%', height:'55%'}}/>
           </div>
 
           <div className="est">
-            <img src={este} style={{width:'55%', height:'55%'}}/>
+            <img src={este} alt="este" style={{width:'55%', height:'55%'}}/>
           </div>
 
           <div className="imgBruju">
-            <img src={bruju} style={{width:'70%', height:'70%'}}/>
-          </div>
-
-          
+            <img src={bruju} alt="bruju" style={{width:'70%', height:'70%'}}/>
+          </div>         
         </div>
-        
+
         <div className="stats" id="stats">
           <div className="ataque" id="ataque">
-            <h4 style={{color: 'white'}}>Ataque:</h4>
-            <img src= {espadas} style={{width: '40px'}} alt="espadas"/>
+            <h4 style={{color: 'black', marginRight: '2%', fontSize: '4vh'}}>Ataque:</h4>
+            <p id="atk">--</p>
+            <img src= {espadas} style={{width: '10%', marginLeft: '5%'}} alt="espadas"/>
           </div>
           <div className="defensa" id="defensa">
-            <h4 style={{color: 'white'}}>Defensa:</h4>
-            <p id="txtDef"></p>
-            <img src= {escudo} style={{width: '40px'}} alt="escudo"/>
+            <h4 style={{color: 'black', marginRight: '2%', fontSize: '4vh'}}>Defensa:</h4>
+            <p id="df">--</p>
+            <img src= {escudo} style={{width: '10%', marginLeft: '5%'}} alt="escudo"/>
           </div>
         </div>
+
+        
         <div className="objetos">
-          <div className="obj1">
-            <div className="imgObj1">
-              <img id="imgObj1" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/axe.svg?token=ALPT6YAHZPFG6CIJQ5ZXXY277NEO2" alt="obj1" width="50px"/>
-              <h3>Q</h3>
-            </div>
-            <div className="infoObj1">
-              <h6>Hachas del destino</h6>
-              <h6>Ataque : X</h6>
-              <h6>Defensa : X</h6>
-            </div>
+          <div id="obj1" className="obj1">
+            <img id="imgObj1" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/axe.svg?token=ALPT6YAHZPFG6CIJQ5ZXXY277NEO2" alt="obj1" width="100%"/>
+            <p className="objectTitle">Hachas del destino (Q)</p>
+            <p>Ataque : 9</p>
+            <p>Defensa : -1</p>
           </div>
-          <div className="obj2">
-            <div className="imgObj2">
-              <img id="imgObj2" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/kunai.svg?token=ALPT6YE3XKRBYDZIKYFGFPS77NET6" alt="obj2" width="50px"/>
-              <h3>W</h3>
-            </div>
-            <div className="infoObj2">
-              <h6>Kunai Represor</h6>
-              <h6>Ataque : X</h6>
-              <h6>Defensa : X</h6>
-            </div>
+          <div id="obj2" className="obj2">
+            <img id="imgObj2" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/kunai.svg?token=ALPT6YE3XKRBYDZIKYFGFPS77NET6" alt="obj2" width="100%"/>
+            <p className="objectTitle">Kunai Represor (W)</p>
+            <p>Ataque : 7</p>
+            <p>Defensa : 4</p>
           </div>
-          <div className="obj3">
-            <div className="imgObj3">
-              <img id="imgObj3" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/spear.svg?token=ALPT6YCQJB627XIZ6Q2COTC77NEUS" alt="obj3" width="50px"/>
-              <h3>E</h3>
-            </div>
-            <div className="infoObj3">
-              <h6>Lanza Letal</h6>
-              <h6>Ataque : X</h6>
-              <h6>Defensa : X</h6>
-            </div>
+          <div id="obj3" className="obj3">
+            <img id="imgObj3" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/spear.svg?token=ALPT6YCQJB627XIZ6Q2COTC77NEUS" alt="obj3" width="100%"/>
+            <p className="objectTitle">Lanza Letal (E)</p>
+            <p>Ataque : 10</p>
+            <p>Defensa : 0</p>
           </div>
-          <div className="obj4">
-            <div className="imgObj4">
-              <img id="imgObj4" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/weapon.svg?token=ALPT6YHHTINJ635FRSINDP277NEVE" alt="obj4" width="50px"/>
-              <h3>R</h3>
-            </div>
-            <div className="infoObj4">
-              <h6>Garras del Inmortal</h6>
-              <h6>Ataque : X</h6>
-              <h6>Defensa : X</h6>
-            </div>
+          <div id="obj4" className="obj4">
+            <img id="imgObj4" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/weapon.svg?token=ALPT6YHHTINJ635FRSINDP277NEVE" alt="obj4" width="100%"/>
+            <p className="objectTitle">Garras Inmortales (R)</p>
+            <p>Ataque : 16</p>
+            <p>Defensa : -4</p>
           </div>
-          <div className="obj5">
-            <div className="imgObj5">
-              <img id="imgObj5" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/attackPotion.svg?token=ALPT6YDY2XSYIMEV7M3JLC277NEB2" alt="obj5"width="50px"/>
-              <h3>T</h3>
-            </div>
-            <div className="infoObj5">
-              <h6>Poción de Sangre</h6>
-              <h6>Ataque : X</h6>
-              <h6>Defensa : X</h6>
-            </div>
+          <div id="obj5" className="obj5">
+            <img id="imgObj5" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/attackPotion.svg?token=ALPT6YDY2XSYIMEV7M3JLC277NEB2" alt="obj5"width="100%"/>
+            <p className="objectTitle">Poción Sangre (T)</p>
+            <p>Ataque : 8</p>
+            <p>Defensa : 0</p>
           </div>
-          <div className="obj6">
-            <div className="imgObj6">
-              <img id="imgObj6" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/defensePotion.svg?token=ALPT6YCLUDVO7BEY3JEG6CK77NEFI" alt="obj5" width="50px"/>
-              <h3>Y</h3>
-            </div>
-            <div className="infoObj6">
-              <h6>Poción de Corrupción</h6>
-              <h6>Ataque : X</h6>
-              <h6>Defensa : X</h6>
-            </div>
+          <div id="obj6" className="obj6">
+            <img id="imgObj6" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/defensePotion.svg?token=ALPT6YCLUDVO7BEY3JEG6CK77NEFI" alt="obj6" width="100%"/>
+            <p className="objectTitle">Poción Rabia (Y)</p>
+            <p>Ataque : 0</p>
+            <p>Defensa : 8</p>
           </div>
-          <div className="explicacion"></div>
-        </div>
+        </div> 
+
       </header>
     </div>
   );

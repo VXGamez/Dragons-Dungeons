@@ -14,5 +14,6 @@ import sud from'./sud.png';
 import este from'./este.png';
 import oeste from'./oeste.png';
 import bruju from'./bruju.png';
+import papeliko from './papeliko.png';
 
-export { logo, up, left, down, right, vidaLogo, espadas, escudo, noObj, maderita, marco, nord, sud, este, oeste, bruju};
+export { papeliko, logo, up, left, down, right, vidaLogo, espadas, escudo, noObj, maderita, marco, nord, sud, este, oeste, bruju};

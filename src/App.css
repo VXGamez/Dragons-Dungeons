@@ -2,17 +2,15 @@
   text-align: center;
 }
 
-
-
 .App-header {
 
   background-image: url('./assets/bricks.jpg');
-  background-size: cover;
-  min-height: 100vh;
-  
+  background-size: cover;  
+  max-height: 100vh;
+  z-index: -10;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 10% 25% 25% 40%;
+  grid-template-rows: 0.3fr 1fr 1fr 1fr; /*10% 25% 25% 40%;*/
   gap: 0px 0px;
   grid-template-areas:
     "header header header header"
@@ -21,13 +19,49 @@
     "objetos terminal terminal control";
 }
 
-.miniMapa{
-  float: right;
-  background-color: orange;
-  height: 150px;
-  width: 150px;
-  z-index: 5;
+.mapa{
+  grid-area: mapa; 
+  position: relative
 }
+
+.miniMapa{
+  position: absolute;
+  top: 15.5%;
+  right: 5.3%;
+  object-fit: cover;
+  z-index: 5;
+  float: right;
+  background-size: cover;
+  background-color: white;
+  opacity: 0.5;
+  width: 24.7%;
+  height: 32%;
+}
+
+
+
+.marquito {
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  max-height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+.escena {
+  background-size:cover;
+  background-color: rgb(34, 32, 32);
+  width: 90.5%;
+  height: 78%;
+  float: center;
+  top: 16%;
+  left: 4%;
+  z-index:1;
+  object-fit: cover;
+  position: absolute;
+}
+
 
 .header { 
   grid-area: header; 
@@ -60,6 +94,7 @@
 .player { 
   grid-area: player; 
   display:flex;
+  color: white;
   flex-direction: column;
   align-items: center; 
   justify-content: center;
@@ -69,6 +104,7 @@
 .terminal { 
   grid-area: terminal; 
   background-color: #282c34;
+  background-size: cover;
 }
 
 .log{
@@ -89,11 +125,10 @@ h3{
 
 .control { 
   grid-area: control; 
-  opacity: 0.5;
   background-color: white;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-rows: 90px 90px 90px;
   gap: 0px 0px;
   grid-template-areas:
     ". up ."
@@ -103,22 +138,22 @@ h3{
 
 .up { 
   grid-area: up; 
-  
+  background-color: black;
+
 }
 
 .down { 
   grid-area: down; 
-  
+  background-color: black;
 }
 .right { 
   grid-area: right; 
-  opacity: 0.5;
   background-color: black;
 }
+
 .left { 
   grid-area: left; 
-  opacity: 0.5;
-  background-color: green;
+  background-color: black;
 
 }
 
@@ -126,6 +161,8 @@ h3{
   grid-area: bruju; 
   margin: auto;
   display: grid;
+  transform: translateY(40%);
+  z-index: 5;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
   gap: 0px 0px;
@@ -143,27 +180,27 @@ h3{
 .est { grid-area: est; }
 .imgBruju { grid-area: imgBruju; }
 
-
 .stats { 
   grid-area: stats; 
-  background-image: url('./assets/maderita.png');
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: initial;
-  background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
+  z-index: 5;
+  margin: auto;
 }
 
 .ataque{
   display: flex;
-  margin-left: 30%;
-  margin-top: 7%;
+  align-items: center;
+  justify-content: center;
 }
 
 .defensa{
   display: flex;
-  margin-left: 30%;
+  align-items: center;
+  justify-content: center;
+}
+
+.stats p{
+  font-size: 4vh;
+  color: black;
 }
 
 
@@ -186,156 +223,646 @@ h3{
   margin-top: 3%;  
 }
 
-
+body{
+  overflow: hidden;
+}
 
 .objetos{
-  background-image: url('./assets/papeliko.png');
+  z-index: 5;
+  overflow: hidden;
   background-size: cover;
+ /*background-image: url('./assets/papeliko.png');*/
+  background-repeat: no-repeat;
   grid-area: objetos; 
-  height: 125%;
-  transform: translateY(-20%);
   display: grid;
-  padding-top: 100px;
   padding-left: 10px;
   padding-right: 10px;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  gap: 0px 0px;
+  grid-template-rows: 50% 50%;
+  gap: 2px 2px;
   font-style: Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace;
   grid-template-areas:
     "obj1 obj2 obj3"
     "obj4 obj5 obj6"
-    "explicacion explicacion explicacion";
+
 }
 
-.obj1 {
-  display: grid;
-  grid-template-columns: 0.7fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "imgObj1 infoObj1";
-  grid-area: obj1;
-  background-color: #282c3472;
-  border: 5px solid white;
+
+.imagenFondo{
+  position: absolute;
+  width: 25%;
+  left:0;
+  top:12%;
+  overflow: hidden;
+  z-index: 0;
 }
-.imgObj1 { 
-  grid-area: imgObj1; 
- 
+
+.objetos img{
+  margin-top: 10px;
+  height: 30%;
+  z-index: 0;
 }
-.infoObj1 { 
-  grid-area: infoObj1; 
+
+.objetos p{
+  font-size: 1.4vh;
+  margin:0;
   color: white;
-  white-space: nowrap;
 }
-.obj2 {
-  display: grid;
-  grid-template-columns: 0.7fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "imgObj2 infoObj2";
+
+.objectTitle{
+  font-size: 0.85vh;
+  font-weight: bold;
+}
+
+@keyframes cooldown{
+  0%{
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(255,238,93,0.7105217086834734) 8%, rgba(40,4,4,0) 100%);
+  }
+  10%{
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 10%, rgba(255,238,93,0.7105217086834734) 18%, rgba(40,4,4,0) 100%);
+  }
+  20%{
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 20%, rgba(255,238,93,0.7105217086834734) 28%, rgba(40,4,4,0) 100%);
+  }
+  30%{
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 30%, rgba(255,238,93,0.7105217086834734) 38%, rgba(40,4,4,0) 100%);
+  }
+  40%{
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 40%, rgba(255,238,93,0.7105217086834734) 48%, rgba(40,4,4,0) 100%);
+  }
+  50%{
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 50%, rgba(255,238,93,0.7105217086834734) 58%, rgba(40,4,4,0) 100%);
+  }
+  60%{
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 60%, rgba(255,238,93,0.7105217086834734) 68%, rgba(40,4,4,0) 100%);
+  }
+  70%{
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 70%, rgba(255,238,93,0.7105217086834734) 78%, rgba(40,4,4,0) 100%);
+  }
+  80%{
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 80%, rgba(255,238,93,0.7105217086834734) 88%, rgba(40,4,4,0) 100%);
+  }
+  90%{
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 90%, rgba(255,238,93,0.7105217086834734) 98%, rgba(40,4,4,0) 100%);
+  }
+  99%{
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 100%, rgba(255,238,93,0.7105217086834734) 100%, rgba(40,4,4,0) 100%);
+  }
+}
+
+
+.obj1 { 
+  grid-area: obj1; 
+  transition: transform 1s ease-in-out;
+  background-color: #282c3472;
+}
+.obj2 { 
   grid-area: obj2;
-  background-color: #282c3472;
-  border: 5px solid white;
+  transition: transform 1s ease-in-out;
+  background-color: #282c3472; 
 }
-.imgObj2 { 
-  grid-area: imgObj2; 
+.obj3 { 
+  grid-area: obj3; 
+  transition: transform 1s ease-in-out;
+  background-color: #282c3472;
+}
+.obj4 { 
+  grid-area: obj4; 
+  transition: transform 1s ease-in-out;
+  background-color: #282c3472;
+}
+.obj5 { 
+  grid-area: obj5; 
+  transition: transform 1s ease-in-out;
+  background-color: #282c3472;
+}
+.obj6 { 
+  grid-area: obj6; 
+  transition: transform 1s ease-in-out;
+  background-color: #282c3472;
+}
 
-}
-.infoObj2 { 
-  grid-area: infoObj2; 
-  color: white;
-  white-space: nowrap;
 
-}
-.obj3 {
-  display: grid;
-  grid-template-columns: 0.7fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "imgObj3 infoObj3";
-  grid-area: obj3;
-  background-color: #282c3472;
-  border: 5px solid white;
-}
-.imgObj3 { 
-  grid-area: imgObj3; 
 
-}
-.infoObj3 { 
-  grid-area: infoObj3;
-  color: white;
-  white-space: nowrap;
-}
-.obj4 {
-  display: grid;
-  grid-template-columns: 0.7fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "imgObj4 infoObj4";
-  grid-area: obj4;
-  background-color: #282c3472;
-  border: 5px solid white;
-}
-.imgObj4 { 
-  grid-area: imgObj4; 
 
-}
-.infoObj4 { 
-  grid-area: infoObj4;
-  color: white;
-  white-space: nowrap;
-}
-.obj5 {
-  display: grid;
-  grid-template-columns: 0.7fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "imgObj5 infoObj5";
-  grid-area: obj5;
-  background-color: #282c3472;
-  border: 5px solid white;
-}
-.imgObj5 { 
-  grid-area: imgObj5; 
 
-}
-.infoObj5 { 
-  grid-area: infoObj5; 
-  color: white;
-  white-space: nowrap;
-}
-.obj6 {
-  display: grid;
-  grid-template-columns: 0.7fr 1fr;
-  grid-template-rows: 1fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "imgObj6 infoObj6";
-  grid-area: obj6;
-  background-color: #282c3472;
-  border: 5px solid white;
-}
-.imgObj6 { 
-  grid-area: imgObj6;
-  
-}
-.infoObj6 { 
-  grid-area: infoObj6;
-  color: white;
-  white-space: nowrap;
- }
-.explicacion { 
-  width: 100%;
-  height: 100%;
-  grid-area: explicacion; 
-  
-  background-color: #282c3472;
-  border: 5px solid white;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
