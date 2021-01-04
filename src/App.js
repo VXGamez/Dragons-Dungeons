@@ -1,8 +1,8 @@
 //import logo from './logo.svg';
-import { logo, up, left, down, right,vidaLogo, espadas, escudo } from './assets';
+import { logo, up, left, down, right,vidaLogo, espadas, escudo, marco, maderita, noObj, nord, sud, este, oeste, bruju } from './assets';
 import { avatars } from './assets/avatars';
+import { corrupcion, hachasDestino, garras, kunai, lanza, muerte, sangre } from './assets/audio';
 import Button from 'react-bootstrap/Button'
-import ProgressBar from 'react-bootstrap/ProgressBar'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -75,68 +75,58 @@ function nuevaPartida(){
           imagen.src = avatars[obj.image-1];
           imagen.className = 'characterImage';
           imagen.alt = 'characterImage';
-          imagen.style.height='250px';
+          imagen.style.height='300px';
           newInfo.appendChild(imagen);
           var node = document.createElement("div");
           node.className = 'life';
           node.id = 'life';
-          node.innerHTML =  `<div className="corasong"> <img src='/static/media/corazon.d3bf3074.svg' alt='vida' height='30px'/>  </div> <div class="progress"><div role="progressbar" class="progress-bar bg-danger progress-bar-animated progress-bar-striped" aria-valuenow="`+(obj.vitalpoints*2)+`" aria-valuemin="0" aria-valuemax="100" style="width: `+(obj.vitalpoints*2)+`%;">`+(obj.vitalpoints*2)+`vp</div></div>`;
+          node.innerHTML =  `<div className="corasong"> <img src='/static/media/corazon.d3bf3074.svg' alt='vida' height='30px'/>  </div> <div class="progress"><div role="progressbar" class="progress-bar bg-danger progress-bar-animated progress-bar-striped" aria-valuenow="`+(obj.vitalpoints*2)+`" aria-valuemin="0" aria-valuemax="100" style="width: `+(obj.vitalpoints*2)+`%;">`+(obj.vitalpoints)+`vp</div></div>`;
           newInfo.appendChild(node);
           console.log(obj);
+          var selectedObject = document.createElement("img");
+          selectedObject.id = "selectedObject";
+          selectedObject.src = noObj;
+          selectedObject.alt = 'selectedObject';
+          selectedObject.style.height='50px';
+          selectedObject.style.marginTop='30px';
+          newInfo.appendChild(selectedObject);
+          var objectInfo = document.createElement("p");
+          objectInfo.id = 'objectName';
+          objectInfo.textContent = 'Ningun objeto seleccionado';
+          objectInfo.style.fontSize = '16px';
+          objectInfo.style.marginTop='10px';
+          objectInfo.style.fontWeight='bold';
+          objectInfo.style.fontFamily = 'Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace';
+          newInfo.appendChild(objectInfo);
+          var objectAttack = document.createElement("p");
+          objectAttack.id = 'objectAttack';
+          objectAttack.textContent = 'Ataque: -';
+          objectAttack.style.fontSize = '14px';
+          objectAttack.style.fontWeight='bold';
+          objectAttack.style.fontFamily = 'Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace';
+          newInfo.appendChild(objectAttack);
+          var objectDefense = document.createElement("p");
+          objectDefense.id = 'objectDefense';
+          objectDefense.textContent = 'Defensa: -';
+          objectDefense.style.fontSize = '14px';
+          objectDefense.style.fontWeight='bold';
+          objectDefense.style.fontFamily = 'Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace';
+          newInfo.appendChild(objectDefense);
           document.getElementById("player").appendChild(newInfo);
           
           
-          var dire = document.getElementById("stats");
+          var atk = document.createElement("p");
+          atk.innerText('obj.attack');
+          document.getElementById("ataque").appendChild(atk);
+
+          var df = document.createElement("p");
+          df.innerText('obj.defense');
+          document.getElementById("defensa").appendChild(df);
           
-          var diversiong = document.createElement("div");
           
-          var ataque = document.createElement("p");
-          ataque.innerText = 'Ataque: ' + obj.attack;
-          ataque.style.fontFamily = 'Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace';
-          ataque.style.fontSize = '30px';
-          ataque.style.color = 'white';
-          ataque.style.marginTop = '5%';
-          ataque.style.marginLeft = '25%';
 
-          diversiong.appendChild(ataque);
-
-          var img = document.createElement("img");
-          img.src =  espadas;
-          img.alt = 'espadas';
-          img.style.width = '10%';
-          img.style.marginLeft = '5%';
-
-          diversiong.appendChild(img);
-
-          diversiong.style.display = 'flex';
-          diversiong.style.flexDirection = 'row';
-
-          dire.appendChild(diversiong);
           
-          var diversiong2 = document.createElement("div");
           
-          var defensa = document.createElement("p");
-          defensa.innerText = 'Defensa: ' + obj.defense;
-          defensa.style.fontFamily = 'Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace';
-          defensa.style.fontSize = '30px';
-          defensa.style.color = 'white';
-          defensa.style.marginLeft = '25%';
-
-          diversiong2.appendChild(defensa);
-
-          var img2 = document.createElement("img");
-          img2.src = escudo;
-          img2.alt = 'escudo';
-          img2.style.width = '10%';
-          img2.style.marginLeft = '5%';
-        
-          
-          diversiong2.style.display = 'flex';
-          diversiong2.style.flexDirection = 'row';
-
-          diversiong2.appendChild(img2);
-          dire.appendChild(diversiong2);
-
         })
         .catch(function (err) {
             console.log('Augh, there was an error!', err.statusText);
@@ -207,6 +197,7 @@ document.onkeydown = function(e) {
   switch (e.keyCode) {
       case 37:
           console.log("El personaje se mueve a la izquierda");
+          document.getElementsByClassName("left").style.transform = "scale(0.5)";
           break;
       case 38:
           console.log("El personaje se mueve hacia delante");
@@ -217,7 +208,107 @@ document.onkeydown = function(e) {
       case 40:
           console.log("El personaje se mueve hacia atras");
           break;
+      case 81:
+          var audio = new Audio(hachasDestino);
+          audio.play();
+          var newObj = 
+          {
+            name: 'Hachas del Destino',
+            image: document.getElementById("imgObj1").src,
+            attack: '9',
+            defense: '-1'
+          }
+          console.log("Hachas del destino forjadas!");
+          console.log("La muerte es como el viento... siempre a mi lado...");
+          break;
+      case 87:
+          var audio = new Audio(kunai);
+          audio.play();
+          var newObj = 
+          {
+            name: 'Kunai Represor',
+            image: document.getElementById("imgObj2").src,
+            attack: '7',
+            defense: '4'
+          }
+          console.log("Kunai represor ");
+          console.log("Nunca se tienen demasiados kunai...");
+          break;
+      case 69:
+          var audio = new Audio(lanza);
+          audio.play();
+          var newObj = 
+          {
+            name: 'Lanza Letal',
+            image: document.getElementById("imgObj3").src,
+            attack: '10',
+            defense: '0'
+          }
+          console.log("Lanza letal forjada!");
+          console.log("Huye! Y la lanza encontrará tu espalda...");
+          break;
+      case 82:
+          var audio = new Audio(garras);
+          audio.play();
+          var newObj = 
+          {
+            name: 'Garras del inmortal',
+            image: document.getElementById("imgObj4").src,
+            attack: '16',
+            defense: '-4'
+          }
+          console.log("Garras del inmortal forjadas!");
+          console.log("Hmmm.... Siente el poder de la naturaleza");
+          break;
+      case 84:
+          var audio = new Audio(sangre);
+          audio.play();
+          var newObj = 
+          {
+            name: 'Poción de sangre',
+            image: document.getElementById("imgObj5").src,
+            attack: '8',
+            defense: '0'
+          }
+          console.log("Poción de sangre creada!");
+          console.log("Rojos se tornarán los rios");
+          break;
+      case 89:
+          
+          var audio = new Audio(corrupcion);
+          audio.play();
+          var newObj = 
+          {
+            name: 'Poción de corrupción',
+            image: document.getElementById("imgObj6").src,
+            attack: '0',
+            defense: '8'
+          }
+          console.log("Poción de corrupción creada!");
+          console.log("Esto puede doler...");
+          break;
+      case 187:
+          
+          var audio = new Audio(muerte);
+          audio.play();
+          var newObj = 
+          {
+            name: 'Poción de corrupción',
+            image: document.getElementById("imgObj6").src,
+            attack: '0',
+            defense: '8'
+          }
+          console.log("Poción de corrupción creada!");
+          console.log("Esto puede doler...");
+          break;
   }
+  console.log(e.keyCode);
+  //Q = 81
+  //W = 87
+  //E = 69
+  //R = 82
+  //T = 84
+  //Y = 89
 };
 
 
@@ -239,6 +330,7 @@ function App() {
 
         </div>
         <div className="mapa">
+          <img src={marco} style={{width:'101.5%',height:'105.5%', transform: 'translateY(-5%)'}}/>
           <div className="miniMapa">
 
           </div>
@@ -257,10 +349,10 @@ function App() {
         </div>
         <div className="control">
           <div className="up"> 
-            <img src={up} style={{margin:'auto',width:'100px',display:'block'}}/> 
+            <img src={up} style={{marginTop:"100%",width:'100px',display:'block'}}/> 
           </div>
           <div className="down"> 
-            <img src={down} style={{margin:'auto',width:'100px',display:'block'}}/> 
+            <img src={down} style={{marginBottom:"100%",width:'100px',display:'block'}}/> 
           </div>
           <div className="left"> 
             <img src={left} style={{margin:'auto',width:'100px',display:'block'}}/> 
@@ -269,12 +361,46 @@ function App() {
             <img src={right} style={{margin:'auto',width:'100px',display:'block'}}/> 
           </div>
         </div>
-        <div className="bruju"></div>
-        <div className="stats" id="stats"></div>
+        <div className="bruju">
+          
+          <div className="nord">
+            <img src={nord} style={{width:'55%', height:'55%'}}/>
+          </div>
+
+          <div className="sud">
+            <img src={sud} style={{width:'55%', height:'55%'}}/>
+          </div>
+
+          <div className="oest">
+            <img src={oeste} style={{width:'55%', height:'55%'}}/>
+          </div>
+
+          <div className="est">
+            <img src={este} style={{width:'55%', height:'55%'}}/>
+          </div>
+
+          <div className="imgBruju">
+            <img src={bruju} style={{width:'70%', height:'70%'}}/>
+          </div>
+
+          
+        </div>
+        
+        <div className="stats" id="stats">
+          <div className="ataque" id="ataque">
+            <h4 style={{color: 'white'}}>Ataque:</h4>
+            <img src= {espadas} style={{width: '40px'}} alt="espadas"/>
+          </div>
+          <div className="defensa" id="defensa">
+            <h4 style={{color: 'white'}}>Defensa:</h4>
+            <p id="txtDef"></p>
+            <img src= {escudo} style={{width: '40px'}} alt="escudo"/>
+          </div>
+        </div>
         <div className="objetos">
           <div className="obj1">
             <div className="imgObj1">
-              <img src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/axe.svg?token=ALPT6YAHZPFG6CIJQ5ZXXY277NEO2" alt="obj1" width="50px"/>
+              <img id="imgObj1" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/axe.svg?token=ALPT6YAHZPFG6CIJQ5ZXXY277NEO2" alt="obj1" width="50px"/>
               <h3>Q</h3>
             </div>
             <div className="infoObj1">
@@ -285,7 +411,7 @@ function App() {
           </div>
           <div className="obj2">
             <div className="imgObj2">
-              <img src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/kunai.svg?token=ALPT6YE3XKRBYDZIKYFGFPS77NET6" alt="obj2" width="50px"/>
+              <img id="imgObj2" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/kunai.svg?token=ALPT6YE3XKRBYDZIKYFGFPS77NET6" alt="obj2" width="50px"/>
               <h3>W</h3>
             </div>
             <div className="infoObj2">
@@ -296,7 +422,7 @@ function App() {
           </div>
           <div className="obj3">
             <div className="imgObj3">
-              <img src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/spear.svg?token=ALPT6YCQJB627XIZ6Q2COTC77NEUS" alt="obj3" width="50px"/>
+              <img id="imgObj3" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/spear.svg?token=ALPT6YCQJB627XIZ6Q2COTC77NEUS" alt="obj3" width="50px"/>
               <h3>E</h3>
             </div>
             <div className="infoObj3">
@@ -307,7 +433,7 @@ function App() {
           </div>
           <div className="obj4">
             <div className="imgObj4">
-              <img src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/weapon.svg?token=ALPT6YHHTINJ635FRSINDP277NEVE" alt="obj4" width="50px"/>
+              <img id="imgObj4" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/weapon.svg?token=ALPT6YHHTINJ635FRSINDP277NEVE" alt="obj4" width="50px"/>
               <h3>R</h3>
             </div>
             <div className="infoObj4">
@@ -318,7 +444,7 @@ function App() {
           </div>
           <div className="obj5">
             <div className="imgObj5">
-              <img src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/attackPotion.svg?token=ALPT6YDY2XSYIMEV7M3JLC277NEB2" alt="obj5"width="50px"/>
+              <img id="imgObj5" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/attackPotion.svg?token=ALPT6YDY2XSYIMEV7M3JLC277NEB2" alt="obj5"width="50px"/>
               <h3>T</h3>
             </div>
             <div className="infoObj5">
@@ -329,7 +455,7 @@ function App() {
           </div>
           <div className="obj6">
             <div className="imgObj6">
-              <img src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/defensePotion.svg?token=ALPT6YCLUDVO7BEY3JEG6CK77NEFI" alt="obj5" width="50px"/>
+              <img id="imgObj6" src="https://raw.githubusercontent.com/VXGamez/P2-PW/main/src/assets/objects/defensePotion.svg?token=ALPT6YCLUDVO7BEY3JEG6CK77NEFI" alt="obj5" width="50px"/>
               <h3>Y</h3>
             </div>
             <div className="infoObj6">

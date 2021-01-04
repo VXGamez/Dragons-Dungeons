@@ -56,8 +56,6 @@
 
 .mapa { 
   grid-area: mapa; 
-  opacity: 0.5;
-  background-color: blue;
 }
 .player { 
   grid-area: player; 
@@ -92,20 +90,20 @@ h3{
 .control { 
   grid-area: control; 
   opacity: 0.5;
-  
   background-color: white;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
   gap: 0px 0px;
   grid-template-areas:
     ". up ."
-    "left down right";
+    "left . right"
+    ". down .";
 }
 
 .up { 
   grid-area: up; 
- 
+  
 }
 
 .down { 
@@ -114,22 +112,58 @@ h3{
 }
 .right { 
   grid-area: right; 
+  opacity: 0.5;
+  background-color: black;
 }
 .left { 
   grid-area: left; 
+  opacity: 0.5;
+  background-color: green;
 
 }
 
 .bruju { 
   grid-area: bruju; 
-  opacity: 0.5;
-  background-color: green;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    ". nord ."
+    "oest imgBruju est"
+    ". sud .";
+  width: 70%;
+  height: 70%;
 }
+
+.nord { grid-area: nord; }
+.oest { grid-area: oest; }
+.sud { grid-area: sud; }
+.est { grid-area: est; }
+.imgBruju { grid-area: imgBruju; }
+
+
 .stats { 
   grid-area: stats; 
-  opacity: 0.5;
-  background-color: red;
-  height: 150px;
+  background-image: url('./assets/maderita.png');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: initial;
+  background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+}
+
+.ataque{
+  display: flex;
+  margin-left: 30%;
+  margin-top: 7%;
+}
+
+.defensa{
+  display: flex;
+  margin-left: 30%;
 }
 
 
@@ -149,9 +183,9 @@ h3{
   grid-area: barrah; 
   margin-right: 10px;
   vertical-align: middle;
-  margin-top: 3%;
-  
+  margin-top: 3%;  
 }
+
 
 
 .objetos{
