@@ -174,11 +174,7 @@ function nuevaPartida(){
 
             //ctx.fillRect(40, 0, w/40 - 2 , h/40 - 2);
 
-          
-
-
-
-          
+        
             
             
             makeRequest('GET', 'http://battlearena.danielamo.info/api/map/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token, null)
