@@ -1,5 +1,5 @@
 //import logo from './logo.svg';
-import { logo, up, left, down, right, espadas, escudo, marco, noObj, nord, sud, este, oeste, bruju, papeliko } from './assets';
+import { logo, up, left, down, right, espadas, escudo, marco, noObj, nord, sud, este, oeste, brujuNord, brujuSud, brujuOest, brujuEst, papeliko } from './assets';
 import { avatars } from './assets/avatars';
 import { corrupcion, hachasDestino, garras, kunai, lanza, muerte, sangre } from './assets/audio';
 import Button from 'react-bootstrap/Button'
@@ -71,7 +71,35 @@ function makeRequest (method, url, obj) {
   });
 }
 
+function showMiniMap(){
 
+  makeRequest('GET', 'http://battlearena.danielamo.info/api/map/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token, null)
+  .then(function (datums) {
+    
+    var obj = JSON.parse(datums);
+    var total = obj.enemies.length;
+    let j = 0, i=0;
+
+    //ctx.clearRect(0, 0, c.width, c.height);
+    var w = document.getElementById("myCanvas").clientWidth;
+    var h = document.getElementById("myCanvas").clientHeight;
+    var c = document.getElementById("myCanvas");
+    c.width  = c.offsetWidth;
+    c.height = c.offsetHeight;
+    var ctx = c.getContext("2d");
+    ctx.fillStyle = "#FF0000"; 
+    for(j = 0; j < total; j++) {
+      ctx.fillRect((w/40)*obj.enemies[j].x, h-((h/40)*obj.enemies[j].y), w/40 - 2 , h/40 - 2);
+    }
+    ctx.fillStyle = "#FFFFFF"; 
+    ctx.fillRect((w/40)*constantes.PLAYER_INFO.x, h-((h/40)*constantes.PLAYER_INFO.y), w/40 - 2 , h/40 - 2);
+    
+})
+  .catch(function (err) {
+    console.log('Augh, there was an error!', err.statusText);
+  });
+
+}
 
 
 function nuevaPartida(){
@@ -159,50 +187,8 @@ function nuevaPartida(){
             var df = document.getElementById("df")
             df.textContent = obj.defense;
             
+            showMiniMap();
 
-            console.log("Width?");
-            var w = document.getElementById("myCanvas").clientWidth;
-            console.log(w);
-            console.log("Height?");
-            var h = document.getElementById("myCanvas").clientHeight;
-            console.log(h);
-            var c = document.getElementById("myCanvas");
-            c.width  = c.offsetWidth;
-            c.height = c.offsetHeight;
-            var ctx = c.getContext("2d");
-            ctx.fillStyle = "#000000"; 
-
-            //ctx.fillRect(40, 0, w/40 - 2 , h/40 - 2);
-
-        
-            
-            
-            makeRequest('GET', 'http://battlearena.danielamo.info/api/map/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token, null)
-            .then(function (datums) {
-              
-              var obj = JSON.parse(datums);
-              var total = obj.enemies.length;
-              let j = 0, i=0;
-              
-              //ctx.clearRect(0, 0, c.width, c.height);
-              var w = document.getElementById("myCanvas").clientWidth;
-              var h = document.getElementById("myCanvas").clientHeight;
-              var c = document.getElementById("myCanvas");
-              var ctx = c.getContext("2d");
-              ctx.fillStyle = "#FF0000"; 
-              for(j = 0; j < total; j++) {
-                ctx.fillRect((w/40)*obj.enemies[j].x, h-((h/40)*obj.enemies[j].y), w/40 - 2 , h/40 - 2);
-              }
-              ctx.fillStyle = "#000000"; 
-              ctx.fillRect((w/40)*constantes.PLAYER_INFO.x, h-((h/40)*constantes.PLAYER_INFO.y), w/40 - 2 , h/40 - 2);
-
-            
-              
-          })
-            .catch(function (err) {
-              console.log('Augh, there was an error!', err.statusText);
-            });
-            
           
           })
           .catch(function (err) {
@@ -344,7 +330,10 @@ document.onkeyup = function(e) {
         direction = 'O';
         sleep(100).then(() => {
           document.getElementById("left").style.transform = "scale(1)";
-        });      
+          document.getElementById("imgBruju").src = {brujuOest};
+   
+        });    
+       
         break;
       case 38:
         constantes.PLAYER_INFO.direction = 'N';
@@ -545,11 +534,22 @@ document.onkeyup = function(e) {
     console.log('DIRECTION: ' + direction);
     makeRequest('GET', 'http://battlearena.danielamo.info/api/move/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token + '/' +direction, null)
     .then(function (datums) {
-        var obj = JSON.parse(datums);
-        console.log('ES BIEN:' + JSON.stringify(obj));
+        /*var obj = JSON.parse(datums);*/
+        /*console.log('ES BIEN:' + JSON.stringify(obj));*/
+       
+        sleep(1000).then(() => {
+          makeRequest('GET', 'http://battlearena.danielamo.info/api/player/'+constantes.TOKEN+'/'+constantes.PLAYER_INFO.player_token, null)
+          .then(function (datums) {
+            var obj = JSON.parse(datums);
+            constantes.PLAYER_INFO.x = obj.x;
+            constantes.PLAYER_INFO.y = obj.y;
+          });
+
+          showMiniMap();
+        }); 
     })
     .catch(function (err){
-      console.log('ES MAL:' + JSON.stringify(err));
+      console.log('ES MAL:' + err);
     });
     created=0;
   }
@@ -652,9 +652,30 @@ function App() {
         <div className="mapa">
           <img className="marquito" src={marco} alt="marquito"/>
           <div className="escena" id="escena"></div>
-          //<div className="mm" id="miniMapa">
-          <canvas className="miniMapa" id="myCanvas" width="100%" height="100%"></canvas>
+        
+          <div className="bruju">
+          
+            <div className="nord">
+              <img src={nord} alt="nord" style={{width:'55%', height:'55%'}}/>
+            </div>
+
+            <div className="sud">
+              <img src={sud} alt="sud" style={{width:'55%', height:'55%'}}/>
+            </div>
+
+            <div className="oest">
+              <img src={oeste} alt="oeste" style={{width:'55%', height:'55%'}}/>
+            </div>
+
+            <div className="est">
+              <img src={este} alt="este" style={{width:'55%', height:'55%'}}/>
+            </div>
+
+            <div className="imgBruju" id="imgBruju">
+              <img src={brujuNord} alt="bruju" style={{width:'70%', height:'70%'}}/>
+            </div>         
           </div>
+          
 
         </div>
         
@@ -682,31 +703,12 @@ function App() {
             <img src={right} alt="right" style={{height: "100%", width: "100%",display:'block'}}/> 
           </div>
         </div>
+
+      <div className="mini">
+        <canvas className="miniMapa" id="myCanvas" width="100%" height="100%"></canvas>
+      </div>
+        
        
-
-        <div className="bruju">
-          
-          <div className="nord">
-            <img src={nord} alt="nord" style={{width:'55%', height:'55%'}}/>
-          </div>
-
-          <div className="sud">
-            <img src={sud} alt="sud" style={{width:'55%', height:'55%'}}/>
-          </div>
-
-          <div className="oest">
-            <img src={oeste} alt="oeste" style={{width:'55%', height:'55%'}}/>
-          </div>
-
-          <div className="est">
-            <img src={este} alt="este" style={{width:'55%', height:'55%'}}/>
-          </div>
-
-          <div className="imgBruju">
-            <img src={bruju} alt="bruju" style={{width:'70%', height:'70%'}}/>
-          </div>         
-        </div>
-
         <div className="stats" id="stats">
           <div className="ataque" id="ataque">
             <h4 style={{color: 'black', marginRight: '2%', fontSize: '4vh'}}>Ataque:</h4>
