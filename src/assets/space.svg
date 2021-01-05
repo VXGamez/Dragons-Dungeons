@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="960px" height="150px" viewBox="0 0 960 150" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Nexus 7 Copy</title>
+    <g id="Nexus-7-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" fill="#6F8B9A" x="10" y="14" width="938" height="118" rx="18"></rect>
+        <rect id="Rectangle" fill="#82A1B1" x="20" y="20" width="920" height="106" rx="18"></rect>
+        <text id="Space" font-family="RobotoMono-Medium, Roboto Mono Medium" font-size="18" font-weight="normal" fill="#D8D8D8">
+            <tspan x="63.4956055" y="110">Space</tspan>
+        </text>
+    </g>
+</svg>
