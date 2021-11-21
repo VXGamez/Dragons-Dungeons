@@ -1,4 +1,4 @@
-# P2-PW
+# Dragons & Dungeons
 Pràctica 2 Projectes Web I
 
 Multiplayer game developed with custom API as a University Project. 
